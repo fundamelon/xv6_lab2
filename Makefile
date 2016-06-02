@@ -105,7 +105,7 @@ entryother: entryother.S
 
 initcode: initcode.S
 	$(CC) $(CFLAGS) -nostdinc -I. -c initcode.S
-	$(LD) $(LDFLAGS) -N -e start -Ttext 0 -o initcode.out initcode.o
+	$(LD) $(LDFLAGS) -N -e start -Ttext 0x1000 -o initcode.out initcode.o # CHANGED ENTRY POINT
 	$(OBJCOPY) -S -O binary initcode.out initcode
 	$(OBJDUMP) -S initcode.o > initcode.asm
 
@@ -175,6 +175,7 @@ UPROGS=\
 	_test_sleep\
 	_wc\
 	_zombie\
+	_null\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -245,7 +246,7 @@ EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
 	printf.c umalloc.c test1.c test.c test_sleep.c frisbee.c\
-	test_q.c\
+	test_q.c null.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
