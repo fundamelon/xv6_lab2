@@ -6,6 +6,9 @@
 #include "x86.h"
 #include "proc.h"
 
+// thread table
+
+
 void lock_init(lock_t *lock){
     lock->locked = 0;
 }
@@ -14,6 +17,33 @@ void lock_acquire(lock_t *lock){
 }
 void lock_release(lock_t *lock){
     xchg(&lock->locked,0);
+}
+
+
+typedef struct {
+    int count;
+    int queue[16];
+    int queue_head;
+    int queue_tail;
+    lock_t *lock;
+} Semaphore;
+
+void sem_acquire(Semaphore *s) {
+    int got = 0;
+    while(!got) {
+        lock_acquire(s->lock);
+        if(s->count > 0) {
+            s->count--;
+            got = 1;
+        }
+        lock_release(s->lock);
+    }
+}
+
+void sem_signal(Semaphore *s) {
+    lock_acquire(s->lock);
+    s->count++;
+    lock_release(s->lock);
 }
 
 
