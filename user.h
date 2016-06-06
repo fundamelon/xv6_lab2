@@ -47,3 +47,9 @@ void *thread_create(void (*start_routine)(void*), void *arg);
 void lock_init(lock_t *lock);
 void lock_acquire(lock_t *lock);
 void lock_release(lock_t *lock);
+
+// semaphores
+typedef struct Semaphore Semaphore;
+Semaphore *sem_make(int start);
+void sem_acquire(Semaphore *s);
+void sem_signal(Semaphore *s);
