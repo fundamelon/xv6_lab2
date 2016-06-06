@@ -9,6 +9,8 @@
 #define TMAX 16
 #define SEM_QMAX 16
 
+#define _DEBUG 1
+
 // Thread table
 int ttable[TMAX];
 unsigned long rands = 1;
@@ -34,15 +36,19 @@ struct Semaphore {
 
 
 Semaphore *sem_make(int start) {
+    if(_DEBUG) printf(0, "Semaphore initializing... ");
     Semaphore *s = malloc(sizeof(Semaphore));
     s->count = start;
     s->q_head = s->q_tail = 0;
+    s->lock = malloc(sizeof(lock_t));
     lock_init(s->lock);
+    if(_DEBUG) printf(0, "success.\n");
     return s;
 }
 
 
 void sem_acquire(Semaphore *s) {
+    if(_DEBUG) printf(0, "Acquiring semaphore... ");
     // lock sem
     lock_acquire(s->lock);
 
@@ -63,9 +69,11 @@ void sem_acquire(Semaphore *s) {
 
     // unlock sem
     lock_release(s->lock);
+    if(_DEBUG) printf(0, "success.\n");
 }
 
 void sem_signal(Semaphore *s) {
+    if(_DEBUG) printf(0, "Signaling semaphore... ");
     // lock sem
     lock_acquire(s->lock);
 
@@ -78,6 +86,7 @@ void sem_signal(Semaphore *s) {
 
     // unlock sem
     lock_release(s->lock);
+    if(_DEBUG) printf(0, "success.\n");
 }
 
 
@@ -121,8 +130,8 @@ void *thread_create(void(*start_routine)(void*), void *arg){
     if(tid == 0){
         printf(1,"tid = 0 return \n");
     }
-//    wait();
-//    free(garbage_stack);
+    wait();
+    free(garbage_stack);
 
     return 0;
 }
