@@ -6,8 +6,8 @@
 #include "x86.h"
 #include "proc.h"
 
-// thread table
-
+// Thread table
+int ttable[16];
 
 void lock_init(lock_t *lock){
     lock->locked = 0;
