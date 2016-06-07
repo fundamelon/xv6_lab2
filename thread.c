@@ -85,11 +85,6 @@ void sem_signal(Semaphore *s) {
 }
 
 
-void thread_yield() {
-    yield();
-}
-
-
 void *thread_create(void(*start_routine)(void*), void *arg){
     int tid;
     void * stack = malloc(2 * 4096);

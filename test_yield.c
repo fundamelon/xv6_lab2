@@ -1,28 +1,26 @@
 #include "types.h"
 #include "user.h"
 
-Semaphore *sem_A;
-Semaphore *sem_B;
-
 void A(void* arg_ptr) {
-    sem_acquire(sem_A);
-    printf(0, "A starting\n");
-    thread_yield();
     int i;
-    for(i = 0; i < 10000000; i++);
-    printf(0, "A complete\n");
-    sem_signal(sem_B);
+    for(i = 0; i < 5; i++) {
+        int j;
+        for(j = 0; j < 10000; j++);
+        printf(0, "A\n");
+        thread_yield();
+    }
     texit();
 }
 
 
 void B( void* arg_ptr) {
-    sem_acquire(sem_B);
-    printf(0, "B starting\n");
     int i;
-    for(i = 0; i < 10000000; i++);
-    printf(0, "B complete\n");
-    sem_signal(sem_A);
+    for(i = 0; i < 5; i++) {
+        int j;
+        for(j = 0; j < 10000; j++);
+        printf(0, "B\n");
+        thread_yield();
+    }
     texit();
 }
 
@@ -31,10 +29,18 @@ void B( void* arg_ptr) {
 
 int main(){
 
-    printf(0, "Testing thread yield... ");
+    printf(0, "Testing thread yield...\n");
 
-    sem_A = sem_make(1);
-    sem_B = sem_make(0);
+    printf(0, "Expected: A and B should alternate.\n");
+
+    void *tid;
+    tid = thread_create(A, (void *)0);
+    if(tid <= 0) printf(1, "error\n");
+
+    tid = thread_create(B, (void *)0);
+    if(tid <= 0) printf(1, "error\n");
+
+    while(wait() >= 0);
 
     printf(0, "\nsuccess\n");
     

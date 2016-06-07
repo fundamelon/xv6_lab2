@@ -33,4 +33,4 @@ SYSCALL(clone)
 SYSCALL(texit)
 SYSCALL(tsleep)
 SYSCALL(twakeup)
-
+SYSCALL(thread_yield)
