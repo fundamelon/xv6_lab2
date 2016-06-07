@@ -3,3 +3,14 @@ _*
 *.asm
 *.sym
 *.o
+
+.gdbinit
+bootblock
+entryother
+fs.img
+initcode
+initcode.out
+kernel
+mkfs
+vectors.S
+xv6.img

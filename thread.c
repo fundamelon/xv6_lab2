@@ -113,25 +113,23 @@ void *thread_create(void(*start_routine)(void*), void *arg){
     }
     if(tid > 0){
         //store threads on thread table
+        /*
         int i;
-        for(i = 0; i < TMAX; i++)
-            if(ttable[i]!=0)
-                ttable[i] = getpid(); // thread id here
-            else if(i == TMAX-1) {
+        for(i = 0; i <= TMAX; i++)
+            if(i == TMAX) {
                 printf(1, "max threads reached\n");
                 return 0;
-            }
-
-        // start the function called for
-        start_routine(arg);
+            } else if(ttable[i]==0)
+                ttable[i] = getpid(); // thread id here
+        */
 
         return garbage_stack;
     }
     if(tid == 0){
         printf(1,"tid = 0 return \n");
     }
-    wait();
-    free(garbage_stack);
+    //wait();
+    //free(garbage_stack);
 
     return 0;
 }

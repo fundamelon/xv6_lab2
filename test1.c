@@ -61,14 +61,14 @@ int main(int argc, char *argv[]){
         while(wait()>=0);
         printf(1,"I am parent, [5] n = %d\n",n);
     }
-
+    printf(0, "success");
    exit();
 }
 
 void test_func(void *arg_ptr){
-//    printf(1,"\n n = %d\n",n);
+    printf(1,"\n n = %d\n",n);
     n++;
-   // printf(1,"after increase by 1 , n = %d\n\n",n);
+    printf(1,"after increase by 1 , n = %d\n\n",n);
     texit();
 }
 
