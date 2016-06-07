@@ -223,40 +223,40 @@ int clone(int stack, int size, int routine, int arg){
 
 
 //modify here >>>
-//    uint argc;
-//    char **argv;
-//    argv = (char **)arg;
-//    np->tf->ebp = sp;
-//    cprintf("in clone argv addr = %d\n",argv);
-//    for(argc = 0; argv[argc];argc++){
-//        if(argc >= MAXARG){
-//            cprintf("execeed max args\n");
-//            return -1;
-//        }
-//        sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
-//        if(copyout(np->pgdir,sp,argv[argc],strlen(argv[argc]) + 1) < 0){
-//            cprintf("copyout wrong \n");
-//            return -1;
-//        }
-//        ustack[3+argc] = sp;
-//    }
-//    ustack[3+argc] = 0;
-//    ustack[0] = 0xffffffff;
-//    ustack[1] = argc;
-//    ustack[2] = sp - (argc + 1)*4;
-//    sp -= (3+argc+1)*4;
-//
-//    if(copyout(np->pgdir,sp,ustack,(3+argc+1)*4) < 0){
-//        cprintf("copyout ustack wrong\n");
-//        return -1;
-//    }
-//    uint cnt; 
-//    cprintf("sp is %d\n",sp);
-//
-//    for (cnt=0;ustack[cnt];cnt++){
-//        cprintf("ustack[%d] is %d\n",cnt,ustack[cnt]);
-//    }
-//
+//  uint argc;
+//  char **argv;
+//  argv = (char **)arg;
+//  np->tf->ebp = sp;
+//  cprintf("in clone argv addr = %d\n",argv);
+//  for(argc = 0; argv[argc];argc++){
+//      if(argc >= MAXARG){
+//          cprintf("execeed max args\n");
+//          return -1;
+//      }
+//      sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
+//      if(copyout(np->pgdir,sp,argv[argc],strlen(argv[argc]) + 1) < 0){
+//          cprintf("copyout wrong \n");
+//          return -1;
+//      }
+//      ustack[3+argc] = sp;
+//  }
+//  ustack[3+argc] = 0;
+//  ustack[0] = 0xffffffff;
+//  ustack[1] = argc;
+//  ustack[2] = sp - (argc + 1)*4;
+//  sp -= (3+argc+1)*4;
+
+//  if(copyout(np->pgdir,sp,ustack,(3+argc+1)*4) < 0){
+//      cprintf("copyout ustack wrong\n");
+//      return -1;
+//  }
+//  uint cnt; 
+//  cprintf("sp is %d\n",sp);
+
+//  for (cnt=0;ustack[cnt];cnt++){
+//      cprintf("ustack[%d] is %d\n",cnt,ustack[cnt]);
+//  }
+
 
 
 //modify here <<<<<

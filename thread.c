@@ -36,19 +36,16 @@ struct Semaphore {
 
 
 Semaphore *sem_make(int start) {
-    if(_DEBUG) printf(0, "Semaphore initializing... ");
     Semaphore *s = malloc(sizeof(Semaphore));
     s->count = start;
     s->q_head = s->q_tail = 0;
     s->lock = malloc(sizeof(lock_t));
     lock_init(s->lock);
-    if(_DEBUG) printf(0, "success.\n");
     return s;
 }
 
 
 void sem_acquire(Semaphore *s) {
-    if(_DEBUG) printf(0, "Acquiring semaphore... ");
     // lock sem
     lock_acquire(s->lock);
 
@@ -65,15 +62,14 @@ void sem_acquire(Semaphore *s) {
     s->count--;
 
     // remove last thread from queue (this one)
+    //printf(0, "removing sem %d\n", s->q[s->q_tail]);
     s->q_tail = (s->q_tail + 1) % SEM_QMAX; 
 
     // unlock sem
     lock_release(s->lock);
-    if(_DEBUG) printf(0, "success.\n");
 }
 
 void sem_signal(Semaphore *s) {
-    if(_DEBUG) printf(0, "Signaling semaphore... ");
     // lock sem
     lock_acquire(s->lock);
 
@@ -86,7 +82,11 @@ void sem_signal(Semaphore *s) {
 
     // unlock sem
     lock_release(s->lock);
-    if(_DEBUG) printf(0, "success.\n");
+}
+
+
+void thread_yield() {
+    yield();
 }
 
 
