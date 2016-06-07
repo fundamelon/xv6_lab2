@@ -179,6 +179,9 @@ UPROGS=\
 	_null\
 	_test_sema\
 	_test_yield\
+	_prob1\
+	_prob2\
+	_prob3\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -250,6 +253,7 @@ EXTRA=\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
 	printf.c umalloc.c test1.c test.c test_sleep.c frisbee.c\
 	test_q.c null.c test_random.c test_sema.c test_yield.c\
+	prob1.c prob2.c prob3.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
