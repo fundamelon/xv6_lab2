@@ -6,10 +6,10 @@
 #include "x86.h"
 #include "proc.h"
 
-#define TMAX 16
-#define SEM_QMAX 16
+#define TMAX 128
+#define SEM_QMAX 128
 
-#define _DEBUG 1
+#define _DEBUG 0 
 
 // Thread table
 int ttable[TMAX];
@@ -54,16 +54,14 @@ void sem_acquire(Semaphore *s) {
         s->q[s->q_head] = getpid();             // enqueue
         s->q_head = (s->q_head + 1) % SEM_QMAX; // increment queue head
         lock_release(s->lock);                  // unlock
+        if(_DEBUG) printf(0, "thread %d sleep\n", getpid());
         tsleep();                               // block
         lock_acquire(s->lock);                  // lock
     }
 
     // take sem down
     s->count--;
-
-    // remove last thread from queue (this one)
-    //printf(0, "removing sem %d\n", s->q[s->q_tail]);
-    s->q_tail = (s->q_tail + 1) % SEM_QMAX; 
+    if(_DEBUG) printf(0, "thread %d acquired to %d\n", getpid(), s->count);
 
     // unlock sem
     lock_release(s->lock);
@@ -75,10 +73,17 @@ void sem_signal(Semaphore *s) {
 
     // put sem up
     s->count++;
+    if(_DEBUG) printf(0, "thread %d signaled to %d\n", getpid(), s->count);
 
     // if exists, wakeup a waiting thread
-    if(s->q_head != s->q_tail)
+    if(s->q_head != s->q_tail) {
+        // wakeup queue tail thread
+        if(_DEBUG) printf(0, "thread %d wakeup\n", s->q[s->q_tail]);
         twakeup(s->q[s->q_tail]);
+        // pop from queue tail
+        if(_DEBUG) printf(0, "thread %d dequeue %d\n", getpid(), s->q[s->q_tail]);
+        s->q_tail = (s->q_tail + 1) % SEM_QMAX; 
+    }
 
     // unlock sem
     lock_release(s->lock);
@@ -117,7 +122,7 @@ void *thread_create(void(*start_routine)(void*), void *arg){
             } else if(ttable[i]==0)
                 ttable[i] = getpid(); // thread id here
         */
-
+        if(_DEBUG) printf(0, "thread %d created\n", tid);
         return garbage_stack;
     }
     if(tid == 0){
