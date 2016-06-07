@@ -9,7 +9,7 @@
 #define TMAX 128
 #define SEM_QMAX 128
 
-#define _DEBUG 0 
+#define _DEBUG 0
 
 // Thread table
 int ttable[TMAX];
