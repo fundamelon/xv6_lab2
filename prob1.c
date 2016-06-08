@@ -96,5 +96,6 @@ int main() {
     int amt = random(10);
     run_test(amt*2, amt);
 
+    printf(0, "H2O problem complete\n");
     exit();
 }
