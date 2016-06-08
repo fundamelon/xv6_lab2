@@ -40,15 +40,14 @@ void climb_up() {
     lock_release(msg_mutex); 
     work(100000); 
     lock_acquire(msg_mutex);
-    on_tree++;
-    printf(0, "\tmonkey %d %s climbed up (%d on the tree)\n", getpid(), ((getpid()==dominant_tid)?"(DOMINANT)":""), on_tree);
+    printf(0, "\tmonkey %d %s climbed up (%d going up)\n", getpid(), ((getpid()==dominant_tid)?"(DOMINANT)":""), comingup);
     lock_release(msg_mutex);
 }
  
 void get_coconut() { 
     work(500000); // takes 5 times as long as to get up/down (decrease consistency)
     lock_acquire(msg_mutex);
-    printf(0, "\tmonkey %d %s got a coconut\n", getpid(), ((getpid()==dominant_tid)?"(DOMINANT)":""));
+    printf(0, "\tmonkey %d %s got a coconut (%d on the tree)\n", getpid(), ((getpid()==dominant_tid)?"(DOMINANT)":""), on_tree);
     lock_release(msg_mutex);
 }
  
@@ -58,8 +57,7 @@ void climb_down() {
     lock_release(msg_mutex); 
     work(100000); 
     lock_acquire(msg_mutex);
-    on_tree--;
-    printf(0, "\tmonkey %d %s climbed down (%d on the tree)\n", getpid(), ((getpid()==dominant_tid)?"(DOMINANT)":""), on_tree);
+    printf(0, "\tmonkey %d %s climbed down (%d coming down)\n", getpid(), ((getpid()==dominant_tid)?"(DOMINANT)":""), comingdown);
     lock_release(msg_mutex);
 }
 
@@ -68,22 +66,11 @@ void advanced_monkey(void* arg_ptr) {
 
     int* arg = (int*)arg_ptr;
     int dominant = *arg;
-    /*
-    if(dominant) {
-        dominant_appears();
-        dominant_present = 1;
-        dominant_tid = getpid();
-    } else if(dominant_present) { // if a dominant monkey is here, sleep
-        q_dom[q_dom_head] = getpid();
-        q_dom_head = (q_dom_head+1) % MAXMONKEYS;
-        if(q_dom_head == q_dom_tail) printf(1, "monkey queue full");
-        tsleep();
-    } */
 
     if(dominant) {
         dominant_tid = getpid();
         dominant_appears();
-        if(on_tree == TREESIZE) {
+        if(comingup == TREESIZE || on_tree == TREESIZE) {
             dominant_waiting = 1;
             tsleep();
             dominant_waiting = 0;
@@ -91,12 +78,15 @@ void advanced_monkey(void* arg_ptr) {
     } else
         sem_acquire(tree);
 
+
     sem_acquire(up_mutex);
+    on_tree++;
     comingup++;
     if(comingup == 1) //first monkey coming up
         sem_acquire(climb);
     sem_signal(up_mutex);
 
+    if(!dominant && dominant_present) thread_yield();
     climb_up();
 
     sem_acquire(up_mutex);
@@ -105,6 +95,7 @@ void advanced_monkey(void* arg_ptr) {
         sem_signal(climb);
     sem_signal(up_mutex);
 
+    if(!dominant && dominant_present) thread_yield();
     get_coconut();
 
     sem_acquire(down_mutex);
@@ -113,24 +104,21 @@ void advanced_monkey(void* arg_ptr) {
         sem_signal(climb);
     sem_signal(down_mutex);
 
+    if(!dominant && dominant_present) thread_yield();
     climb_down();
 
     sem_acquire(down_mutex);
     comingdown--;
     if(comingdown == 0) // last monkey coming down
         sem_signal(climb);
+    on_tree--;
     sem_signal(down_mutex);
-    /*
-    if(dominant) {
-        dominant_present = 0;
-        while(q_dom_head != q_dom_tail) { // wake up any sleeping monkeys
-            twakeup(q_dom[q_dom_tail]); 
-            q_dom_tail = (q_dom_tail + 1) % MAXMONKEYS;
-        }
-    } */
 
     if(!dominant) {
-        if(dominant_waiting) twakeup(dominant_tid); // let dominant know one monkey left
+        if(dominant_waiting) { 
+            twakeup(dominant_tid); // let dominant know one monkey left
+            thread_yield();
+        }
         sem_signal(tree);
     }
 
